@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drupal
+  namespace: drupal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drupal
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      containers:
+        - name: drupal
+          image: drupal:10-apache
+          ports:
+            - containerPort: 80
+          #env:
+          #  - name: DRUPAL_DB_HOST
+          #    value: mariadb
+          #  - name: DRUPAL_DB_NAME
+          #    valueFrom:
+          #      secretKeyRef:
+          #        name: mariadb-secret
+          #        key: MARIADB_DATABASE
+          #  - name: DRUPAL_DB_USER
+          #    valueFrom:
+          #      secretKeyRef:
+          #        name: mariadb-secret
+          #        key: MARIADB_USER
+          #  - name: DRUPAL_DB_PASSWORD
+          #    valueFrom:
+          #      secretKeyRef:
+          #        name: mariadb-secret
+          #        key: MARIADB_PASSWORD
+          volumeMounts:
+            - name: drupal-sites
+              mountPath: /var/www/html/sites
+      volumes:
+        - name: drupal-sites
+          persistentVolumeClaim:
+            claimName: drupal-pvc
